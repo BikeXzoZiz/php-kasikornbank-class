@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2018-2019
  * @license   https://creativecommons.org/licenses/by/4.0/ Attribution 4.0 International (CC BY 4.0)
  * @link      https://github.com/likecyber/php-kasikornbank-class
- * @version   1.0.2
+ * @version   1.0.3
 **/
 
 class KasikornBank {
@@ -83,7 +83,7 @@ class KasikornBank {
 		$this->response = iconv("windows-874", "utf-8", curl_exec($handle));
 		$this->http_code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 		curl_close($handle);
-		if (preg_match("/<input type=\"hidden\" name=\"org\.apache\.struts\.taglib\.html\.TOKEN\" value=\"([0-9]*(\.[0-9]{1,16})?)\">/", $this->response, $matches)) {
+		if (preg_match("/<input type=\"hidden\" name=\"org\.apache\.struts\.taglib\.html\.TOKEN\" value=\"([0-9]+(\.[0-9]{1,16})?)\">/", $this->response, $matches)) {
 			$this->_TOKEN = $matches[1];
 		}
 		return $this->response;
@@ -164,7 +164,7 @@ class KasikornBank {
 		$result = array();
 		$this->request($this->ebank_gateway, "/accountinfo/AccountStatementInquiry.do");
 		if ($this->http_code === 200 && $this->check_response()) {
-			if (preg_match_all("/<option value=\"((?:1|2)[0-9]{3}(?:0[1-9]|1[0-2])(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])[0-9]{6})\">([0-9]{3}-[0-9]-[0-9]{5}-[0-9]) (?:.*)<\/option>/", $this->response, $matches)) {
+			if (preg_match_all("/<option value=\"((?:1|2)[0-9]{3}(?:0[1-9]|1[0-2])(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])[0-9]{6})\">([0-9]{3}-[0-9]-[0-9]{5}-[0-9]) (?:.*?)<\/option>/", $this->response, $matches)) {
 				foreach ($matches[2] as $key => $value) {
 					$result[$value] = $matches[1][$key];
 				}
