@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2018-2019
  * @license   https://creativecommons.org/licenses/by/4.0/ Attribution 4.0 International (CC BY 4.0)
  * @link      https://github.com/likecyber/php-kasikornbank-class
- * @version   1.0.0
+ * @version   1.0.1
 **/
 
 class KasikornBank {
@@ -110,7 +110,7 @@ class KasikornBank {
 		if ($this->http_code === 302) {
 			$this->request($this->online_gateway, "/ib/redirectToIB.jsp");
 			if ($this->http_code === 200) {
-				if (preg_match("/<input type=\"hidden\" name=\"txtParam\" value=\"(.{192})\" \/>/", $this->response, $matches)) {
+				if (preg_match("/<input type=\"hidden\" name=\"txtParam\" value=\"([a-z0-9]{192})\" \/>/", $this->response, $matches)) {
 					$this->request($this->ebank_gateway, "/security/Welcome.do", array(
 						"txtParam" => $matches[1]
 					));
@@ -125,7 +125,7 @@ class KasikornBank {
 		$result = false;
 		$this->request($this->online_gateway, "/logout.do?cmd=success");
 		if ($this->http_code === 200) {
-			if (preg_match("/<iframe id=\"logoutIBFrame\" src=\"https:\/\/ebank\.kasikornbankgroup\.com\/retail\/security\/Logout\.do\?action=retailuser&txtParam=(.*)\" width=\"0\" height=\"0\"><\/iframe>/", $this->response, $matches)) {
+			if (preg_match("/<iframe id=\"logoutIBFrame\" src=\"https:\/\/ebank\.kasikornbankgroup\.com\/retail\/security\/Logout\.do\?action=retailuser&txtParam=([a-z0-9]{160})\" width=\"0\" height=\"0\"><\/iframe>/", $this->response, $matches)) {
 				$this->request($this->ebank_gateway, "/security/Logout.do?action=retailuser&txtParam=".$matches[1]);
 				$result = $this->http_code === 302;
 			}
